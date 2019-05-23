@@ -89,25 +89,78 @@ const availableDiv = {
 };
 
 
+const highLightTd = {
+  width: '40px',
+  height: '39px',
+  background: 'rgb(237, 246, 246)',
+  color: 'rgb(0, 132, 137)',
+  border: '2px solid rgb(255, 255, 255)',
+  borderRadius: '7px',
+  padding: '0px',
+  background: 'rgb(204,238,235)',
+};
+
+const minNightsDiv = {
+  fontFamily: 'Circular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+  fontWeight: '700',
+  height: '12px',
+  lineHeight: '12px',
+  textAlign: 'center',
+  width: '38px',
+  color: 'rgb(255, 255, 255)',
+};
+
+const minNightsTd = {
+  width: '40px',
+  height: '39px',
+  background: 'rgb(237, 246, 246)',
+  color: 'rgb(255, 255, 255)',
+  border: '2px solid rgb(255, 255, 255)',
+  borderRadius: '7px',
+  padding: '0px',
+  background: 'rgb(204,238,235)',
+};
 class Day extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       checkIn: false,
       checkDate: null,
+      highLight: false,
     };
     this.checkDate = this.checkDate.bind(this);
+    this.mouseOverCheck = this.mouseOverCheck.bind(this);
+    this.mouseOutCheck = this.mouseOutCheck.bind(this);
   }
 
   checkDate(e) {
-    // if click date same as checkin date ignore it
     if (this.props.checkInDate !== this.props.checkDate) {
       this.props.setCheckIn(this.props.checkDate);
     }
   }
 
+  mouseOverCheck(e) {
+    this.setState({ highLight: true });
+    if (this.props.checkInDate === this.props.checkDate) {
+      console.log('hey highlight min nights!');
+      this.props.minNights();
+    }
+  }
+
+  mouseOutCheck(e) {
+    this.setState({ highLight: false });
+    if (this.props.checkInDate === this.props.checkDate) {
+      console.log('hey mouseout  no highlight min nights!');
+      this.props.noMinNights();
+    }
+  }
+
   render() {
     // console.log(this.props.booked);
+    // first check if highlight is true (show days that should be highlighted)'
+    // if you these means it is hovering over and you can click nights after min
+
+
     if (this.props.booked === 'true') {
       // console.log('inside true!');
       return (
@@ -121,21 +174,66 @@ class Day extends React.Component {
       );
     }
 
-    if (this.props.selected) {
-      // console.log(`this day is between checkin and checkout :${this.props.checkDate}`);
+    let tdStyling = minNightsTd;
+    let divStyling = minNightsDiv;
+    console.log(this.props.highLight);
+    if (this.props.highLight) {
+      return (
+        <td
+          onClick={this.checkDate}
+          style={tdStyling}
+          key={this.props.d}
+          className="calendar-day"
+          onMouseOver={this.mouseOverCheck}
+          onMouseOut={this.mouseOutCheck}
+        >
+          <div style={div1}>
+            <div style={div2}>
+              <div style={divStyling}>{this.props.d}</div>
+            </div>
+          </div>
+        </td>
+      );
     }
 
-    // if (this.state.checkIn) {
-    //   const tdStyling = clickedTd;
-    //   const divStyling = clickedDiv;
-    // } else {
-    //   const tdStyling = this.props.selected ? clickedTd : availableTd;
-    //   const divStyling = this.props.selected ? clickedDiv : availableDiv;
+
+    tdStyling = this.props.selected ? clickedTd : availableTd;
+    divStyling = this.props.selected ? clickedDiv : availableDiv;
+
+    // const tdStyling = this.state.highLight ? highLightTd : availableTd;
+    // const divStyling = availableDiv;
+
+
+    return (
+      <td
+        onClick={this.checkDate}
+        style={tdStyling}
+        key={this.props.d}
+        className="calendar-day"
+        onMouseOver={this.mouseOverCheck}
+        onMouseOut={this.mouseOutCheck}
+      >
+        <div style={div1}>
+          <div style={div2}>
+            <div style={divStyling}>{this.props.d}</div>
+          </div>
+        </div>
+      </td>
+    );
+
+
+    // if (this.props.highLight) {
+    //   return (
+    //     <td onClick={this.checkDate} style={tdStyling} key={this.props.d} className="calendar-day">
+    //       <div style={div1}>
+    //         <div style={div2}>
+    //           <div style={divStyling}>{this.props.d}</div>
+    //         </div>
+    //       </div>
+    //     </td>
+    //   );
     // }
 
-
-    const tdStyling = this.props.selected ? clickedTd : availableTd;
-    const divStyling = this.props.selected ? clickedDiv : availableDiv;
 
     return (
       <td onClick={this.checkDate} style={tdStyling} key={this.props.d} className="calendar-day">

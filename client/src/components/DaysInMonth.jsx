@@ -8,6 +8,7 @@ class DaysInMonth extends React.Component {
     super(props);
     this.state = {
       dateObject: this.props.month,
+      highLight: false,
 
     };
 
@@ -18,8 +19,22 @@ class DaysInMonth extends React.Component {
     this.totalSlots = this.totalSlots.bind(this);
 
     this.bookedDay = this.bookedDay.bind(this);
+
+    this.minNights = this.minNights.bind(this);
+    this.noMinNights = this.noMinNights.bind(this);
+
+    this.inMinNights = this.inMinNights.bind(this);
   }
 
+  minNights() {
+    console.log('Calling miNights !');
+    this.setState({ highLight: true });
+  }
+
+  noMinNights() {
+    console.log('Calling noMinghtNights');
+    this.setState({ highLight: false });
+  }
 
   firstDayOfMonth() {
     const { dateObject } = this.state;
@@ -46,6 +61,27 @@ class DaysInMonth extends React.Component {
     }
     return false;
     // console.log('booked contains', booked.includes(day));
+  }
+
+  inMinNights(date) {
+    // add min nights to selected date
+    console.log(date);
+    const checkInDate = new Date(this.props.checkInDate);
+    const { minNights } = this.props;
+    console.log(minNights);
+
+
+    const minBookDate = new Date(checkInDate);
+    minBookDate.setDate(checkInDate.getDate() + minNights);
+
+    console.log('checkinDate:', checkInDate);
+    console.log('minimum days to book', minBookDate);
+
+    if (date > checkInDate && date <= minBookDate) {
+      console.log('This day falls between checkin and minbookdate', date);
+      return true;
+    }
+    return false;
   }
 
 
@@ -102,6 +138,12 @@ class DaysInMonth extends React.Component {
         }
       }
 
+      const minDate = false;
+      if (this.inMinNights(new Date(date))) {
+        minDate = true;
+        console.log('falls in min nights!');
+      }
+
 
       if (this.bookedDay(date) || beforeCurrent || beforeCheckIn || afterLastDay) {
         daysInMonth.push(<Day
@@ -116,6 +158,9 @@ class DaysInMonth extends React.Component {
           checkDate={date}
           setCheckIn={this.props.setCheckIn}
           selected={selected}
+          minNights={this.minNights}
+          noMinNights={this.noMinNights}
+          highLight={minDate}
         />);
       }
     }
