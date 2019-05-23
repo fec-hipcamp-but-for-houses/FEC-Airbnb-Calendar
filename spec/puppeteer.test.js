@@ -23,7 +23,7 @@ afterAll(() => {
   browser.close();
 });
 
-describe('Button Test Suite', () => {
+describe('Prev/Next Month Button Test Suite', () => {
   beforeEach(async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
   });
@@ -42,6 +42,7 @@ describe('Button Test Suite', () => {
 
   test('Previous Month Clicked 2 Times', async () => {
     await page.click('#prevMonth');
+    await page.waitFor(1000);
     await page.click('#prevMonth');
 
     const currentValue = await page.$eval('.current-month-calendar', e => e.textContent);
@@ -56,7 +57,6 @@ describe('Button Test Suite', () => {
   test('Current Month ', async () => {
     const value = await page.$eval('.current-month-calendar', e => e.textContent);
     const currentMonth = moment().format('MMMM YYYY');
-    console.log(currentMonth);
 
     expect(value).toEqual(currentMonth);
   });
@@ -76,6 +76,7 @@ describe('Button Test Suite', () => {
 
   test('Next Month Clicked 2 Times ', async () => {
     await page.click('#nextMonth');
+    await page.waitFor(1000);
     await page.click('#nextMonth');
 
     const currentValue = await page.$eval('.current-month-calendar', e => e.textContent);
@@ -86,5 +87,32 @@ describe('Button Test Suite', () => {
 
     expect(currentValue).toEqual(nextMonth);
     expect(nextValue).toEqual(nextNextMonth);
+  });
+});
+
+describe('Clear Date Button Test Suite', () => {
+  beforeEach(async () => {
+    await page.goto(url, { waitUntil: 'networkidle2' });
+  });
+
+  test('On page start clear date does not exist', async () => {
+    const clearButtonCount = await page.$$eval('#clearDate', button => button.length);
+    expect(clearButtonCount).toBe(0);
+  });
+
+  test('Click a calendar day and expect Clear date to pop up', async () => {
+    await page.click('#click');
+    await page.waitFor(2000);
+    const clearButtonCount = await page.$$eval('#clearDate', button => button.length);
+
+    expect(clearButtonCount).toBe(1);
+  });
+
+  test('Clicking clear date should make clear date button dissapear', async () => {
+    await page.click('#click');
+    await page.waitFor(2000);
+    await page.click('#clearDate');
+    const clearButtonCount = await page.$$eval('#clearDate', button => button.length);
+    expect(clearButtonCount).toBe(0);
   });
 });
