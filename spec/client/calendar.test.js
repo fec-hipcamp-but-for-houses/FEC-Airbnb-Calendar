@@ -125,7 +125,6 @@ describe('Calendar minDayAwayCheckIn Test', () => {
 
     const minDayAwayCheckOut = instance.minDayAwayCheckIn('2019-06-22');
     expect(minDayAwayCheckOut).toBe(false);
-    // expect(wrapper.find(Calendar)).to.have.lengthOf(1);
   });
   it('New date does not meet minDayAwayCheckIn for 3 min nights ', () => {
     const calendar = shallow(<Calendar listing={listing} />);
